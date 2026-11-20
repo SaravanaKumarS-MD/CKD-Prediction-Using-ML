@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKD AI | Kidney Health Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">CKD<span> AI.</span></div>
+    <div class="nav-tag">MACHINE LEARNING SYSTEM</div>
+</nav>
+
+<header class="hero">
+    <small>Artificial Intelligence · Healthcare</small>
+    <h1>Smart Kidney Health Prediction</h1>
+    <p>
+        An intelligent machine learning application designed to
+        predict Chronic Kidney Disease patterns using clinical parameters.
+    </p>
+</header>
+
+<main class="container">
+
+<div class="form-card">
+
+    <div class="section-heading">
+        <div class="section-icon">✚</div>
+        <div>
+            <h2>Patient Health Parameters</h2>
+            <p>Enter all 24 clinical attributes below</p>
+        </div>
+    </div>
+
+    <form action="/predict" method="POST">
+        <div class="form-grid">
+            <div>
+    <label>Patient Name</label>
+    <input type="text" name="patient_name"
+           placeholder="Enter patient name" required>
+</div>
+
+            <div><label>Age</label><input type="number" name="age" step="any" required></div>
+            <div><label>Blood Pressure (BP)</label><input type="number" name="bp" step="any" required></div>
+
+            <div><label>Specific Gravity (SG)</label>
+                <select name="sg" required>
+                    <option value="">Select</option>
+                    {% for v in ['1.005','1.010','1.015','1.020','1.025'] %}
+                    <option value="{{ v }}">{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div><label>Albumin (AL)</label>
+                <select name="al" required>
+                    <option value="">Select</option>
+                    {% for v in range(6) %}
+                    <option value="{{ v }}">{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div><label>Sugar (SU)</label>
+                <select name="su" required>
+                    <option value="">Select</option>
+                    {% for v in range(6) %}
+                    <option value="{{ v }}">{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% set fields = [
+                ('rbc','Red Blood Cells',['normal','abnormal']),
+                ('pc','Pus Cell',['normal','abnormal']),
+                ('pcc','Pus Cell Clumps',['present','notpresent']),
+                ('ba','Bacteria',['present','notpresent']),
+                ('htn','Hypertension',['yes','no']),
+                ('dm','Diabetes Mellitus',['yes','no']),
+                ('cad','Coronary Artery Disease',['yes','no']),
+                ('appet','Appetite',['good','poor']),
+                ('pe','Pedal Edema',['yes','no']),
+                ('ane','Anemia',['yes','no'])
+            ] %}
+
+            {% for name, label, choices in fields %}
+            <div>
+                <label>{{ label }}</label>
+                <select name="{{ name }}" required>
+                    <option value="">Select</option>
+                    {% for choice in choices %}
+                    <option value="{{ choice }}">{{ choice|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endfor %}
+
+            <div><label>Blood Glucose Random (BGR)</label><input type="number" name="bgr" step="any" required></div>
+            <div><label>Blood Urea (BU)</label><input type="number" name="bu" step="any" required></div>
+            <div><label>Serum Creatinine (SC)</label><input type="number" name="sc" step="any" required></div>
+            <div><label>Sodium (SOD)</label><input type="number" name="sod" step="any" required></div>
+            <div><label>Potassium (POT)</label><input type="number" name="pot" step="any" required></div>
+            <div><label>Hemoglobin (HEMO)</label><input type="number" name="hemo" step="any" required></div>
+            <div><label>Packed Cell Volume (PCV)</label><input type="number" name="pcv" step="any" required></div>
+            <div><label>White Blood Cell Count (WBCC)</label><input type="number" name="wbcc" step="any" required></div>
+            <div><label>Red Blood Cell Count (RBCC)</label><input type="number" name="rbcc" step="any" required></div>
+
+        </div>
+
+        <button class="predict-btn" type="submit">
+            ✦ &nbsp; Predict CKD Status
+        </button>
+    </form>
+
+    <!-- UPDATED PREDICTION RESULT -->
+    {% if prediction %}
+    <div class="result">
+
+        <h2>Prediction Result</h2>
+
+        <div class="prediction-status">
+            <h1>{{ prediction }}</h1>
+        </div>
+
+        {% if confidence is defined %}
+        <div class="confidence">
+            <h3>Model Confidence</h3>
+            <p>{{ confidence }}%</p>
+        </div>
+        {% endif %}
+
+        {% if model_name %}
+        <div class="model-info">
+            <p><strong>Machine Learning Model:</strong> {{ model_name }}</p>
+        </div>
+        {% endif %}
+
+        {% if explanation %}
+        <div class="explanation">
+            <h3>Prediction Explanation</h3>
+            <p>{{ explanation }}</p>
+        </div>
+        {% endif %}
+
+        {% if input_summary %}
+        <div class="input-summary">
+
+            <h3>Patient Input Summary</h3>
+            <p>All 24 clinical parameters used for prediction</p>
+
+            <div class="summary-grid">
+
+                {% for item in input_summary %}
+                <div class="summary-item">
+                    <span class="summary-label">{{ item.name }}</span>
+                    <span class="summary-value">{{ item.value }}</span>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    <div class="disclaimer">
+        <strong>Medical Disclaimer:</strong>
+        This application is developed for academic and educational purposes.
+        Its output is not a medical diagnosis. Consult a qualified healthcare professional.
+    </div>
+
+</div>
+</main>
+
+<footer class="footer">
+    CKD AI Prediction System · B.Tech Artificial Intelligence & Data Science
+</footer>
+
+</body>
+</html>
